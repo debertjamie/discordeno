@@ -174,7 +174,7 @@ export async function removeReactionEmojiTest(bot: Bot, channelId: bigint, t: De
 
   reactionCounters.set(message.id, 0);
 
-  bot.events.reactionAdd
+  bot.events.reactionAdd;
 
   bot.events.reactionRemoveEmoji = function (bot, payload) {
     reactionCounters.set(payload.messageId, 0);

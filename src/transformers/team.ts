@@ -16,7 +16,7 @@ export function transformTeam(bot: Bot, payload: SnakeCasedPropertiesDeep<Team>)
     members: payload.members.map((member) => ({
       membershipState: member.membership_state,
       // TODO: think about this seems useless to add ["*"] to everything
-        permissions: member.permissions,
+      permissions: member.permissions,
       // TODO: think about this seems useless to add another id here when its also on the one above
       teamId: id,
       user: bot.transformers.user(bot, member.user),

@@ -1,4 +1,4 @@
-import { Bot,  } from "../../bot.ts";
+import { Bot } from "../../bot.ts";
 import type { DiscordGatewayPayload } from "../../types/gateway/gateway_payload.ts";
 import type { MessageReactionRemove } from "../../types/messages/message_reaction_remove.ts";
 import { SnakeCasedPropertiesDeep } from "../../types/util.ts";
