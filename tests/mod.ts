@@ -1,33 +1,33 @@
 import enableCachePlugin from "../plugins/cache/mod.ts";
 import { ChannelTypes, createBot, createEventHandlers, startBot } from "../mod.ts";
 import { assertEquals, assertExists, dotenv } from "./deps.ts";
-// import { deleteMessageWithoutReasonTest, deleteMessageWithReasonTest } from "./helpers/messages/deleteMessage.ts";
-// import { getMessagesTest } from "./helpers/messages/getMessages.ts";
-// import { deleteMessagesWithoutReasonTest, deleteMessagesWithReasonTest } from "./helpers/messages/deleteMessages.ts";
+import { deleteMessageWithoutReasonTest, deleteMessageWithReasonTest } from "./helpers/messages/deleteMessage.ts";
+import { getMessagesTest } from "./helpers/messages/getMessages.ts";
+import { deleteMessagesWithoutReasonTest, deleteMessagesWithReasonTest } from "./helpers/messages/deleteMessages.ts";
 import { delayUntil } from "./utils.ts";
-// import {
-//   sendMessageWithComponents,
-//   sendMessageWithEmbedsTest,
-//   sendMessageWithTextTest,
-// } from "./helpers/messages/sendMessage.ts";
-// import { getMessageTest } from "./helpers/messages/getMessage.ts";
-// import { editMessageTest } from "./helpers/messages/editMessage.ts";
-// import { pinMessageTests } from "./helpers/messages/pin.ts";
-// import { createGuildTests } from "./helpers/guilds/createGuild.ts";
-// import { deleteGuildTests } from "./helpers/guilds/deleteGuild.ts";
-// import { editGuildTests } from "./helpers/guilds/editGuild.ts";
-// import { getAuditLogsTests } from "./helpers/guilds/getAuditLogs.ts";
-// import { getAvailableVoiceRegionsTests } from "./helpers/guilds/getAvailableVoiceRegions.ts";
-// import { getBanTests } from "./helpers/guilds/getBan.ts";
-// import { getBansTests } from "./helpers/guilds/getBans.ts";
-// import { getGuildTests } from "./helpers/guilds/getGuild.ts";
-// import { getVanityURLTests } from "./helpers/guilds/getVanityUrl.ts";
-// import { categoryChildrenTest } from "./helpers/channels/categoryChannels.ts";
-// import { deleteChannelOverwriteTests } from "./helpers/channels/deleteChannelOverwrite.ts";
-// import { editChannelTests } from "./helpers/channels/editChannel.ts";
+import {
+  sendMessageWithComponents,
+  sendMessageWithEmbedsTest,
+  sendMessageWithTextTest,
+} from "./helpers/messages/sendMessage.ts";
+import { getMessageTest } from "./helpers/messages/getMessage.ts";
+import { editMessageTest } from "./helpers/messages/editMessage.ts";
+import { pinMessageTests } from "./helpers/messages/pin.ts";
+import { createGuildTests } from "./helpers/guilds/createGuild.ts";
+import { deleteGuildTests } from "./helpers/guilds/deleteGuild.ts";
+import { editGuildTests } from "./helpers/guilds/editGuild.ts";
+import { getAuditLogsTests } from "./helpers/guilds/getAuditLogs.ts";
+import { getAvailableVoiceRegionsTests } from "./helpers/guilds/getAvailableVoiceRegions.ts";
+import { getBanTests } from "./helpers/guilds/getBan.ts";
+import { getBansTests } from "./helpers/guilds/getBans.ts";
+import { getGuildTests } from "./helpers/guilds/getGuild.ts";
+import { getVanityURLTests } from "./helpers/guilds/getVanityUrl.ts";
+import { categoryChildrenTest } from "./helpers/channels/categoryChannels.ts";
+import { deleteChannelOverwriteTests } from "./helpers/channels/deleteChannelOverwrite.ts";
+import { editChannelTests } from "./helpers/channels/editChannel.ts";
 import { CACHED_COMMUNITY_GUILD_ID, sanitizeMode } from "./constants.ts";
 
-console.log("[Tests] Starting test preparation")
+console.log("[Tests] Starting test preparation");
 dotenv({ export: true, path: `${Deno.cwd()}/.env` });
 
 let TOKEN = Deno.env.get("DISCORD_TOKEN");
@@ -109,190 +109,190 @@ export const message = await bot.helpers.sendMessage(channel.id, {
   content: "Hello Skillz",
 });
 
-// Deno.test({
-//   name: "[guild] create a guild",
-//   fn: async (t) => {
-//     await createGuildTests();
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[guild] delete a guild",
-//   fn: async (t) => {
-//     await deleteGuildTests();
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[guild] edit a guild",
-//   fn: async (t) => {
-//     await editGuildTests(guild.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[guild] get audit logs",
-//   fn: async (t) => {
-//     await getAuditLogsTests(guild.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[guild] get available voice regions",
-//   fn: async (t) => {
-//     await getAvailableVoiceRegionsTests();
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[guild] get a ban",
-//   fn: async (t) => {
-//     await getBanTests(guild.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[guild] get bans",
-//   fn: async (t) => {
-//     await getBansTests(guild.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[guild] get guilds",
-//   fn: async (t) => {
-//     await getGuildTests(guild.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[guild] get vanity url",
-//   fn: async (t) => {
-//     await getVanityURLTests(guild.id);
-//   },
-//   ...sanitizeMode,
-// });
+Deno.test({
+  name: "[guild] create a guild",
+  fn: async (t) => {
+    await createGuildTests();
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[guild] delete a guild",
+  fn: async (t) => {
+    await deleteGuildTests();
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[guild] edit a guild",
+  fn: async (t) => {
+    await editGuildTests(guild.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[guild] get audit logs",
+  fn: async (t) => {
+    await getAuditLogsTests(guild.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[guild] get available voice regions",
+  fn: async (t) => {
+    await getAvailableVoiceRegionsTests();
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[guild] get a ban",
+  fn: async (t) => {
+    await getBanTests(guild.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[guild] get bans",
+  fn: async (t) => {
+    await getBansTests(guild.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[guild] get guilds",
+  fn: async (t) => {
+    await getGuildTests(guild.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[guild] get vanity url",
+  fn: async (t) => {
+    await getVanityURLTests(guild.id);
+  },
+  ...sanitizeMode,
+});
 
-// Deno.test({
-//   name: "[message] send message with text",
-//   fn: async (t) => {
-//     await sendMessageWithTextTest(channel.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[message] send message with embeds",
-//   fn: async (t) => {
-//     await sendMessageWithEmbedsTest(channel.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[message] send message with components",
-//   fn: async (t) => {
-//     await sendMessageWithComponents(channel.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[message] edit message",
-//   fn: async (t) => {
-//     await editMessageTest(channel.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[message] delete message without a reason",
-//   fn: async (t) => {
-//     await deleteMessageWithoutReasonTest(channel.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[message] delete message with a reason",
-//   fn: async (t) => {
-//     await deleteMessageWithReasonTest(channel.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[message] delete messages without a reason",
-//   fn: async (t) => {
-//     await deleteMessagesWithoutReasonTest(channel.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[message] delete messages with a reason",
-//   fn: async (t) => {
-//     await deleteMessagesWithReasonTest(channel.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[message] fetch a message",
-//   fn: async (t) => {
-//     await getMessageTest(channel.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[message] fetch messages",
-//   fn: async (t) => {
-//     await getMessagesTest(channel.id);
-//   },
-//   ...sanitizeMode,
-// });
+Deno.test({
+  name: "[message] send message with text",
+  fn: async (t) => {
+    await sendMessageWithTextTest(channel.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[message] send message with embeds",
+  fn: async (t) => {
+    await sendMessageWithEmbedsTest(channel.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[message] send message with components",
+  fn: async (t) => {
+    await sendMessageWithComponents(channel.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[message] edit message",
+  fn: async (t) => {
+    await editMessageTest(channel.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[message] delete message without a reason",
+  fn: async (t) => {
+    await deleteMessageWithoutReasonTest(channel.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[message] delete message with a reason",
+  fn: async (t) => {
+    await deleteMessageWithReasonTest(channel.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[message] delete messages without a reason",
+  fn: async (t) => {
+    await deleteMessagesWithoutReasonTest(channel.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[message] delete messages with a reason",
+  fn: async (t) => {
+    await deleteMessagesWithReasonTest(channel.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[message] fetch a message",
+  fn: async (t) => {
+    await getMessageTest(channel.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[message] fetch messages",
+  fn: async (t) => {
+    await getMessagesTest(channel.id);
+  },
+  ...sanitizeMode,
+});
 
-// Deno.test({
-//   name: "[message] pin a message",
-//   fn: async (t) => {
-//     await pinMessageTests(channel.id, message.id);
-//   },
-//   ...sanitizeMode,
-// });
+Deno.test({
+  name: "[message] pin a message",
+  fn: async (t) => {
+    await pinMessageTests(channel.id, message.id);
+  },
+  ...sanitizeMode,
+});
 
-// Deno.test({
-//   name: "[channel] send message with text",
-//   fn: async (t) => {
-//     await sendMessageWithTextTest(channel.id);
-//   },
-//   ...sanitizeMode,
-// });
+Deno.test({
+  name: "[channel] send message with text",
+  fn: async (t) => {
+    await sendMessageWithTextTest(channel.id);
+  },
+  ...sanitizeMode,
+});
 
-// Deno.test({
-//   name: "[channel] filter all category channels",
-//   async fn(t) {
-//     await categoryChildrenTest(guild.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[channel] delete a channel overwrite",
-//   async fn(t) {
-//     await deleteChannelOverwriteTests(guild.id);
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[channel] edit a channel w/o a reason",
-//   async fn(t) {
-//     await editChannelTests(guild.id, {});
-//   },
-//   ...sanitizeMode,
-// });
-// Deno.test({
-//   name: "[channel] edit a channel w/ a reason",
-//   async fn(t) {
-//     await editChannelTests(guild.id, { reason: "Blame wolf" });
-//   },
-//   ...sanitizeMode,
-// });
+Deno.test({
+  name: "[channel] filter all category channels",
+  async fn(t) {
+    await categoryChildrenTest(guild.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[channel] delete a channel overwrite",
+  async fn(t) {
+    await deleteChannelOverwriteTests(guild.id);
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[channel] edit a channel w/o a reason",
+  async fn(t) {
+    await editChannelTests(guild.id, {});
+  },
+  ...sanitizeMode,
+});
+Deno.test({
+  name: "[channel] edit a channel w/ a reason",
+  async fn(t) {
+    await editChannelTests(guild.id, { reason: "Blame wolf" });
+  },
+  ...sanitizeMode,
+});
 
-// channels
+// // channels
 // import "./channels/connectToVoice.ts";
 // import "./channels/createChannel.ts";
-// import "./channels/deleteChannel.ts";
+import "./channels/deleteChannel.ts";
 // import "./channels/getChannel.ts";
 // import "./channels/getChannels.ts";
 // import "./channels/stageInstances.ts";
@@ -366,5 +366,7 @@ export const message = await bot.helpers.sendMessage(channel.id, {
 // // TESTS THAT DON'T REQUIRE API CONNECTION
 // import "./local.ts";
 
-// // // BENCHMARK TESTING
+// // BENCHMARK TESTING
 // import "./benchmark.ts";
+
+console.log("Test finished");

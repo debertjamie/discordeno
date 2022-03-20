@@ -1,3 +1,5 @@
+import { Collection } from "../util/collection.ts";
+
 /** https://discord.com/developers/docs/resources/user#user-object-premium-types */
 export enum PremiumTypes {
   None,
@@ -1242,11 +1244,7 @@ export type Camelize<T> = {
     : never;
 };
 
-export type KeysWithUndefined<T> = {
-  [K in keyof T]-?: undefined extends T[K] ? K : never;
-}[keyof T];
-
-// export type Optionalize<T> = T extends object ? 
+// export type Optionalize<T> = T extends object ?
 //   & {
 //     [K in KeysWithUndefined<T>]?: Optionalize<T[K]>;
 //   }
@@ -1255,12 +1253,38 @@ export type KeysWithUndefined<T> = {
 //   }
 //   : T;
 
-export type Optionalize<T> = {
-  [K in KeysWithUndefined<T>]?: Optionalize<T[K]>
-} & {
-  [K in Exclude<keyof T, KeysWithUndefined<T>>]: T[K] extends object
-    ? {} extends Pick<T[K], keyof T[K]>
-      ? T[K]
-      : Optionalize<T[K]>
-    : T[K]
-}
+// export type KeysWithUndefined<T> = {
+//   [K in keyof T]-?: (undefined | null) extends T[K] ? K : never;
+// }[keyof T];
+
+// export type Optionalize<T> = (
+//   & {
+//     [K in KeysWithUndefined<T>]?: Optionalize<T[K]>;
+//   }
+//   & {
+//     [K in Exclude<keyof T, KeysWithUndefined<T>>]: (
+//       // deno-lint-ignore ban-types
+//       T[K] extends object ? Object extends Pick<T[K], keyof T[K]> ? T[K] : Optionalize<T[K]> : T[K]
+//     );
+//   }
+// );
+
+export type KeysWithUndefined<T> = {
+  [K in keyof T]-?: undefined extends T[K] ? K
+    : null extends T[K] ? K
+    : never;
+}[keyof T];
+
+export type Optionalize<T> = T extends object ? (
+  & {
+    [K in KeysWithUndefined<T>]?: T[K];
+  }
+  & {
+    [K in Exclude<keyof T, KeysWithUndefined<T>>]: T[K] extends object ? Object extends Pick<T[K], keyof T[K]> ? T[K]
+    : T[K] extends Collection<any, any> ? T[K]
+    : T[K] extends any[] ? T[K]
+    : Optionalize<T[K]>
+      : T[K];
+  }
+)
+  : T;
