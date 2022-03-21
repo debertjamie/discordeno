@@ -12,7 +12,7 @@ export function transformInteraction(bot: Bot, payload: DiscordInteraction) {
   const guildId = payload.guild_id ? bot.transformers.snowflake(payload.guild_id) : undefined;
   const user = bot.transformers.user(bot, payload.member?.user || payload.user!);
 
-  return {
+  const interaction = {
     // UNTRANSFORMED STUFF HERE
     type: payload.type,
     token: payload.token,
@@ -29,7 +29,6 @@ export function transformInteraction(bot: Bot, payload: DiscordInteraction) {
     channelId: payload.channel_id ? bot.transformers.snowflake(payload.channel_id) : undefined,
     member: payload.member && guildId ? bot.transformers.member(bot, payload.member, guildId, user.id) : undefined,
 
-    // @ts-ignore figure this out
     data: payload.data
       ? {
         componentType: payload.data.component_type,
@@ -41,19 +40,16 @@ export function transformInteraction(bot: Bot, payload: DiscordInteraction) {
         resolved: payload.data.resolved
           ? transformInteractionDataResolved(bot, payload.data.resolved, guildId)
           : undefined,
-        // @ts-ignore TODO: figure this out
         options: payload.data.options,
         targetId: payload.data.target_id ? bot.transformers.snowflake(payload.data.target_id) : undefined,
       }
       : undefined,
   };
+
+  return interaction as Optionalize<typeof interaction>;
 }
 
-export function transformInteractionDataResolved(
-  bot: Bot,
-  resolved: DiscordInteractionDataResolved,
-  guildId?: bigint,
-) {
+export function transformInteractionDataResolved(bot: Bot, resolved: DiscordInteractionDataResolved, guildId?: bigint) {
   const transformed: {
     messages?: Collection<bigint, Message>;
     users?: Collection<bigint, User>;
@@ -126,8 +122,8 @@ export function transformInteractionDataResolved(
     );
   }
 
-  return transformed;
+  return transformed as Optionalize<typeof transformed>;
 }
 
-export interface Interaction extends Optionalize<ReturnType<typeof transformInteraction>> {}
-export interface InteractionDataResolved extends Optionalize<ReturnType<typeof transformInteractionDataResolved>> {}
+export interface Interaction extends ReturnType<typeof transformInteraction> {}
+export interface InteractionDataResolved extends ReturnType<typeof transformInteractionDataResolved> {}

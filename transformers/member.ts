@@ -8,7 +8,7 @@ export function transformUser(bot: Bot, payload: DiscordUser) {
   const user = {
     id: bot.transformers.snowflake(payload.id || ""),
     username: payload.username,
-    discriminator: Number(payload.discriminator),
+    discriminator: payload.discriminator,
     avatar: payload.avatar ? bot.utils.iconHashToBigInt(payload.avatar) : undefined,
     locale: payload.locale,
     email: payload.email ?? undefined,
@@ -21,13 +21,8 @@ export function transformUser(bot: Bot, payload: DiscordUser) {
   return user as Optionalize<typeof user>;
 }
 
-export function transformMember(
-  bot: Bot,
-  payload: DiscordMember,
-  guildId: bigint,
-  userId: bigint,
-) {
-  return {
+export function transformMember(bot: Bot, payload: DiscordMember, guildId: bigint, userId: bigint) {
+  const member = {
     id: userId,
     guildId,
     nick: payload.nick ?? undefined,
@@ -41,7 +36,9 @@ export function transformMember(
       : undefined,
     toggles: new MemberToggles(payload),
   };
+
+  return member as Optionalize<typeof member>;
 }
 
-export interface Member extends Optionalize<ReturnType<typeof transformMember>> {}
-export interface User extends Optionalize<ReturnType<typeof transformUser>> {}
+export interface Member extends ReturnType<typeof transformMember> {}
+export interface User extends ReturnType<typeof transformUser> {}

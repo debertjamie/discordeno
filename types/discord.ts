@@ -740,6 +740,8 @@ export interface DiscordChannel {
   member?: DiscordThreadMember;
   /** computed permissions for the invoking user in the channel, including overwrites, only included when part of the resolved data received on a application command interaction */
   permissions?: string;
+  /** When a thread is created this will be true on that channel payload for the thread. */
+  newly_created?: boolean;
 }
 
 /** https://discord.com/developers/docs/topics/gateway#presence-update */
@@ -781,13 +783,14 @@ export interface DiscordWelcomeScreenChannel {
 export interface DiscordStageInstance {
   /** The topic of the Stage instance (1-120 characters) */
   topic: string;
-
   /** The id of this Stage instance */
   id: string;
   /** The guild id of the associated Stage channel */
   guild_id: string;
   /** The id of the associated Stage channel */
   channel_id: string;
+  /** The id of the scheduled event for this Stage instance */
+  guild_scheduled_event_id?: string;
 }
 
 export interface DiscordThreadMetadata {
@@ -1527,7 +1530,7 @@ export interface DiscordScheduledEvent {
   /** the name of the scheduled event */
   name: string;
   /** the description of the scheduled event */
-  description: string;
+  description?: string;
   /** the time the scheduled event will start */
   scheduled_start_time: string;
   /** the time the scheduled event will end if it does end. */
@@ -1835,6 +1838,8 @@ export interface DiscordComponent {
   style?: ButtonStyles | TextStyles;
   /** text that appears on the button (max 80 characters) */
   label?: string;
+  /** the dev-define value of the option, max 100 characters for select or 4000 for input. */
+  value?: string;
   /** Emoji object that includes fields of name, id, and animated supporting unicode and custom emojis. */
   emoji?: {
     /** Emoji id */

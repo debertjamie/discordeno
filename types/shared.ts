@@ -496,7 +496,7 @@ export enum BitwisePermissionFlags {
   PRIORITY_SPEAKER = 0x0000000000000100,
   /** Allows the user to go live */
   STREAM = 0x0000000000000200,
-  /** Allows guild members to view a channel, which includes reading messages in text channels */
+  /** Allows guild members to view a channel, which includes reading messages in text channels and joining voice channels */
   VIEW_CHANNEL = 0x0000000000000400,
   /** Allows for sending messages in a channel. (does not allow sending messages in threads) */
   SEND_MESSAGES = 0x0000000000000800,
@@ -555,7 +555,7 @@ export enum BitwisePermissionFlags {
   /** Allows for sending messages in threads */
   SEND_MESSAGES_IN_THREADS = 0x0000004000000000,
   /** Allows for launching activities (applications with the `EMBEDDED` flag) in a voice channel. */
-  START_EMBEDDED_ACTIVITIES = 0x0000008000000000,
+  USE_EMBEDDED_ACTIVITIES = 0x0000008000000000,
   /** Allows for timing out users to prevent them from sending or reacting to messages in chat and threads, and from speaking in voice and stage channels */
   MODERATE_MEMBERS = 0x0000010000000000,
 }
@@ -706,7 +706,8 @@ export enum JsonErrorCodes {
   UnknownSticker,
   UnknownInteraction = 10062,
   UnknownApplicationCommand = 10063,
-  UnknownApplicationCommandPermissions = 10066,
+  UnknownVoiceState = 10065,
+  UnknownApplicationCommandPermissions,
   UnknownStageInstance,
   UnknownGuildMemberVerificationForm,
   UnknownGuildWelcomeScreen,
@@ -764,7 +765,7 @@ export enum JsonErrorCodes {
   CannotEditMessageAuthoredByAnotherUser,
   CannotSendAnEmptyMessage,
   CannotSendMessagesToThisUser,
-  CannotSendMessagesInAVoiceChannel,
+  CannotSendMessagesInANonTextChannel,
   ChannelVerificationLevelIsTooHighForYouToGainAccess,
   OAuth2ApplicationDoesNotHaveABot,
   OAuth2ApplicationLimitReached,
@@ -1269,22 +1270,49 @@ export type Camelize<T> = {
 //   }
 // );
 
+// export type KeysWithUndefined<T> = {
+//   [K in keyof T]-?: undefined extends T[K] ? K
+//     : null extends T[K] ? K
+//     : never;
+// }[keyof T];
+
+// export type Optionalize<T> = T extends object ? (
+//   & {
+//     [K in KeysWithUndefined<T>]?: T[K] extends Collection<any, any> ? T[K]
+//       : T[K] extends any[] ? T[K]
+//       : Optionalize<T[K]>;
+//   }
+//   & {
+//     [K in Exclude<keyof T, KeysWithUndefined<T>>]: T[K] extends object ? Object extends Pick<T[K], keyof T[K]> ? T[K]
+//     : T[K] extends Collection<any, any> ? T[K]
+//     : T[K] extends any[] ? T[K]
+//     : Optionalize<T[K]>
+//       : T[K];
+//   }
+// )
+//   : T;
+
+export type Id<T> = T extends infer U ? {
+  [K in keyof U]: U[K];
+}
+  : never;
+
 export type KeysWithUndefined<T> = {
   [K in keyof T]-?: undefined extends T[K] ? K
     : null extends T[K] ? K
     : never;
 }[keyof T];
 
-export type Optionalize<T> = T extends object ? (
+export type Optionalize<T> = T extends Collection<any, any> ? T : T extends object ? Id<
   & {
-    [K in KeysWithUndefined<T>]?: T[K];
+    [K in KeysWithUndefined<T>]?: T[K] extends Collection<any, any> ? T[K] : Optionalize<T[K]>;
   }
   & {
-    [K in Exclude<keyof T, KeysWithUndefined<T>>]: T[K] extends object ? Object extends Pick<T[K], keyof T[K]> ? T[K]
+    [K in Exclude<keyof T, KeysWithUndefined<T>>]: T[K] extends object ? {} extends Pick<T[K], keyof T[K]> ? T[K]
     : T[K] extends Collection<any, any> ? T[K]
-    : T[K] extends any[] ? T[K]
+    : T[K] extends unknown[] ? T[K]
     : Optionalize<T[K]>
       : T[K];
   }
-)
-  : T;
+>
+: T;

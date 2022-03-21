@@ -5,13 +5,10 @@ import { DiscordGuild } from "../types/discord.ts";
 import { Optionalize } from "../types/shared.ts";
 import { GuildToggles } from "./toggles/guild.ts";
 
-export function transformGuild(
-  bot: Bot,
-  payload: { guild: DiscordGuild } & { shardId: number },
-) {
+export function transformGuild(bot: Bot, payload: { guild: DiscordGuild } & { shardId: number }) {
   const guildId = bot.transformers.snowflake(payload.guild.id);
 
-  return {
+  const guild = {
     afkTimeout: payload.guild.afk_timeout,
     approximateMemberCount: payload.guild.approximate_member_count,
     approximatePresenceCount: payload.guild.approximate_presence_count,
@@ -62,6 +59,12 @@ export function transformGuild(
     icon: payload.guild.icon ? bot.utils.iconHashToBigInt(payload.guild.icon) : undefined,
     banner: payload.guild.banner ? bot.utils.iconHashToBigInt(payload.guild.banner) : undefined,
     splash: payload.guild.splash ? bot.utils.iconHashToBigInt(payload.guild.splash) : undefined,
+    channels: new Collection(
+      payload.guild.channels?.map((channel) => {
+        const result = bot.transformers.channel(bot, { channel, guildId });
+        return [result.id, result];
+      }),
+    ),
     roles: new Collection(
       payload.guild.roles?.map((role) => {
         const result = bot.transformers.role(bot, { role, guildId });
@@ -97,6 +100,8 @@ export function transformGuild(
       : undefined,
     premiumProgressBarEnabled: payload.guild.premium_progress_bar_enabled,
   };
+
+  return guild as Optionalize<typeof guild>;
 }
 
-export interface Guild extends Optionalize<ReturnType<typeof transformGuild>> {}
+export interface Guild extends ReturnType<typeof transformGuild> {}
