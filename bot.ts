@@ -34,7 +34,7 @@ import { delay, formatImageURL, hasProperty } from "./util/utils.ts";
 import { iconBigintToHash, iconHashToBigInt } from "./util/hash.ts";
 import { calculateShardId } from "./util/calculateShardId.ts";
 import * as handlers from "./handlers/mod.ts";
-import { Interaction, transformInteraction } from "./transformers/interaction.ts";
+import { Interaction, InteractionDataOption, transformInteraction } from "./transformers/interaction.ts";
 import { Integration, transformIntegration } from "./transformers/integration.ts";
 import { transformApplication } from "./transformers/application.ts";
 import { transformTeam } from "./transformers/team.ts";
@@ -59,9 +59,15 @@ import { transformWelcomeScreen } from "./transformers/welcomeScreen.ts";
 import { transformVoiceRegion } from "./transformers/voiceRegion.ts";
 import { transformWidget } from "./transformers/widget.ts";
 import { transformStageInstance } from "./transformers/stageInstance.ts";
-import { transformSticker } from "./transformers/sticker.ts";
+import { StickerPack, transformSticker, transformStickerPack } from "./transformers/sticker.ts";
 import { GetGatewayBot, transformGatewayBot } from "./transformers/gatewayBot.ts";
-import { DiscordEmoji, DiscordGatewayPayload, DiscordReady } from "./types/discord.ts";
+import {
+  DiscordEmoji,
+  DiscordGatewayPayload,
+  DiscordInteractionDataOption,
+  DiscordReady,
+  DiscordStickerPack,
+} from "./types/discord.ts";
 import { Errors, GatewayDispatchEventNames, GatewayIntents } from "./types/shared.ts";
 
 import {
@@ -177,6 +183,7 @@ export function createEventHandlers(
     debug: events.debug ?? ignore,
     threadCreate: events.threadCreate ?? ignore,
     threadDelete: events.threadDelete ?? ignore,
+    threadMemberUpdate: events.threadMemberUpdate ?? ignore,
     threadMembersUpdate: events.threadMembersUpdate ?? ignore,
     threadUpdate: events.threadUpdate ?? ignore,
     scheduledEventCreate: events.scheduledEventCreate ?? ignore,
@@ -343,6 +350,7 @@ export function createHelpers(
       ...createBaseHelpers(customHelpers || {}),
     })
   ) {
+    // @ts-ignore - TODO: make the types better
     converted[name as keyof FinalHelpers] = (
       // @ts-ignore - TODO: make the types better
       ...args: RemoveFirstFromTuple<Parameters<typeof fun>>
@@ -372,6 +380,7 @@ export interface Transformers {
   role: (bot: Bot, payload: { role: DiscordRole } & { guildId: bigint }) => Role;
   voiceState: (bot: Bot, payload: { voiceState: DiscordVoiceState } & { guildId: bigint }) => VoiceState;
   interaction: (bot: Bot, payload: DiscordInteraction) => Interaction;
+  interactionDataOptions: (bot: Bot, payload: DiscordInteractionDataOption) => InteractionDataOption;
   integration: (bot: Bot, payload: DiscordIntegrationCreateUpdate) => Integration;
   invite: (bot: Bot, invite: DiscordInviteCreate) => Invite;
   application: (bot: Bot, payload: DiscordApplication) => Application;
@@ -397,6 +406,7 @@ export interface Transformers {
   widget: (bot: Bot, payload: DiscordGuildWidget) => GuildWidget;
   stageInstance: (bot: Bot, payload: DiscordStageInstance) => StageInstance;
   sticker: (bot: Bot, payload: DiscordSticker) => Sticker;
+  stickerPack: (bot: Bot, payload: DiscordStickerPack) => StickerPack;
 }
 
 export function createTransformers(options: Partial<Transformers>) {
@@ -435,6 +445,7 @@ export function createTransformers(options: Partial<Transformers>) {
     widget: options.widget || transformWidget,
     stageInstance: options.stageInstance || transformStageInstance,
     sticker: options.sticker || transformSticker,
+    stickerPack: options.stickerPack || transformStickerPack,
     gatewayBot: options.gatewayBot || transformGatewayBot,
   };
 }
@@ -445,6 +456,12 @@ export interface EventHandlers {
   debug: (text: string, ...args: any[]) => unknown;
   threadCreate: (bot: Bot, thread: Channel) => unknown;
   threadDelete: (bot: Bot, thread: Channel) => unknown;
+  threadMemberUpdate: (bot: Bot, payload: {
+    id: bigint;
+    guildId: bigint;
+    joinedAt: number;
+    flags: number;
+  }) => unknown;
   threadMembersUpdate: (
     bot: Bot,
     payload: {
@@ -680,7 +697,6 @@ export interface BotGatewayHandlerOptions {
   THREAD_UPDATE: typeof handlers.handleThreadUpdate;
   THREAD_DELETE: typeof handlers.handleThreadDelete;
   THREAD_LIST_SYNC: typeof handlers.handleThreadListSync;
-  THREAD_MEMBER_UPDATE: typeof handlers.handleThreadMemberUpdate;
   THREAD_MEMBERS_UPDATE: typeof handlers.handleThreadMembersUpdate;
   STAGE_INSTANCE_CREATE: typeof handlers.handleStageInstanceCreate;
   STAGE_INSTANCE_UPDATE: typeof handlers.handleStageInstanceUpdate;
@@ -746,7 +762,6 @@ export function createBotGatewayHandlers(
     THREAD_UPDATE: options.THREAD_UPDATE ?? handlers.handleThreadUpdate,
     THREAD_DELETE: options.THREAD_DELETE ?? handlers.handleThreadDelete,
     THREAD_LIST_SYNC: options.THREAD_LIST_SYNC ?? handlers.handleThreadListSync,
-    THREAD_MEMBER_UPDATE: options.THREAD_MEMBER_UPDATE ?? handlers.handleThreadMemberUpdate,
     THREAD_MEMBERS_UPDATE: options.THREAD_MEMBERS_UPDATE ?? handlers.handleThreadMembersUpdate,
     STAGE_INSTANCE_CREATE: options.STAGE_INSTANCE_CREATE ??
       handlers.handleStageInstanceCreate,

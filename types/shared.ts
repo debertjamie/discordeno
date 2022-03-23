@@ -48,13 +48,21 @@ export enum TeamMembershipStates {
 
 /** https://discord.com/developers/docs/topics/oauth2#application-application-flags */
 export enum ApplicationFlags {
+  /** Intent required for bots in **100 or more servers** to receive [`presence_update` events](#DOCS_TOPICS_GATEWAY/presence-update) */
   GatewayPresence = 1 << 12,
+  /** Intent required for bots in under 100 servers to receive [`presence_update` events](#DOCS_TOPICS_GATEWAY/presence-update), found in Bot Settings */
   GatewayPresenceLimited = 1 << 13,
+  /** Intent required for bots in **100 or more servers** to receive member-related events like `guild_member_add`. See list of member-related events [under `GUILD_MEMBERS`](#DOCS_TOPICS_GATEWAY/list-of-intents) */
   GatewayGuildMembers = 1 << 14,
+  /** Intent required for bots in under 100 servers to receive member-related events like `guild_member_add`, found in Bot Settings. See list of member-related events [under `GUILD_MEMBERS`](#DOCS_TOPICS_GATEWAY/list-of-intents) */
   GatewayGuildMembersLimited = 1 << 15,
+  /** Indicates unusual growth of an app that prevents verification */
   VerificationPendingGuildLimit = 1 << 16,
+  /** Indicates if an app is embedded within the Discord client (currently unavailable publicly) */
   Embedded = 1 << 17,
+  /** Intent required for bots in **100 or more servers** to receive [message content](https://support-dev.discord.com/hc/en-us/articles/4404772028055) */
   GatewayMessageCount = 1 << 18,
+  /** Intent required for bots in under 100 servers to receive [message content](https://support-dev.discord.com/hc/en-us/articles/4404772028055), found in Bot Settings */
   GatewayMessageContentLimited = 1 << 19,
 }
 
@@ -968,10 +976,14 @@ export type GatewayDispatchEventNames =
   | "THREAD_UPDATE"
   | "THREAD_DELETE"
   | "THREAD_LIST_SYNC"
-  | "THREAD_MEMBER_UPDATE"
   | "THREAD_MEMBERS_UPDATE";
 
-export type GatewayEventNames = GatewayDispatchEventNames | "READY" | "RESUMED";
+export type GatewayEventNames =
+  | GatewayDispatchEventNames
+  | "READY"
+  | "RESUMED"
+  // THIS IS A CUSTOM DD EVENT NOT A DISCORD EVENT
+  | "GUILD_LOADED_DD";
 
 /** https://discord.com/developers/docs/topics/gateway#list-of-intents */
 export enum GatewayIntents {
@@ -1303,16 +1315,23 @@ export type KeysWithUndefined<T> = {
     : never;
 }[keyof T];
 
-export type Optionalize<T> = T extends Collection<any, any> ? T : T extends object ? Id<
-  & {
-    [K in KeysWithUndefined<T>]?: T[K] extends Collection<any, any> ? T[K] : Optionalize<T[K]>;
-  }
-  & {
-    [K in Exclude<keyof T, KeysWithUndefined<T>>]: T[K] extends object ? {} extends Pick<T[K], keyof T[K]> ? T[K]
-    : T[K] extends Collection<any, any> ? T[K]
-    : T[K] extends unknown[] ? T[K]
-    : Optionalize<T[K]>
-      : T[K];
-  }
->
-: T;
+export type Optionalize<T> =
+  // Collections don't need optionalizing
+  T extends Collection<any, any> ? T
+    : // If an array only optionalize objects in arrays
+    T extends unknown[] ? T[number] extends Record<any, any> ? Array<Optionalize<T[number]>>
+    : T
+    : // Specific optionalizing of {} go here
+    T extends object ? Id<
+      & {
+        [K in KeysWithUndefined<T>]?: T[K] extends Collection<any, any> ? T[K] : Optionalize<T[K]>;
+      }
+      & {
+        [K in Exclude<keyof T, KeysWithUndefined<T>>]: T[K] extends object ? {} extends Pick<T[K], keyof T[K]> ? T[K]
+        : T[K] extends Collection<any, any> ? T[K]
+        : T[K] extends unknown[] ? T[K]
+        : Optionalize<T[K]>
+          : T[K];
+      }
+    >
+    : T;

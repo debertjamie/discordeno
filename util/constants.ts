@@ -9,7 +9,7 @@ export const GATEWAY_VERSION = 10;
 
 // TODO: update this version
 /** https://github.com/discordeno/discordeno/releases */
-export const DISCORDENO_VERSION = "13.0.0-rc26";
+export const DISCORDENO_VERSION = "13.0.0-rc27";
 
 /** https://discord.com/developers/docs/reference#user-agent */
 export const USER_AGENT = `DiscordBot (https://github.com/discordeno/discordeno, v${DISCORDENO_VERSION})`;
@@ -169,6 +169,9 @@ export const endpoints = {
   // Stage instances
   STAGE_INSTANCES: `${baseEndpoints.BASE_URL}/stage-instances`,
   STAGE_INSTANCE: (channelId: bigint) => `${baseEndpoints.BASE_URL}/stage-instances/${channelId}`,
+
+  // Misc Endpoints
+  NITRO_STICKER_PACKS: `${baseEndpoints.BASE_URL}/sticker-packs`,
 };
 
 export const SLASH_COMMANDS_NAME_REGEX = /^[\w-]{1,32}$/;

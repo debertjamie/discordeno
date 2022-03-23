@@ -20,7 +20,7 @@ export interface SelectMenuComponent {
   type: MessageComponentTypes.SelectMenu;
   /** A custom identifier for this component. Maximum 100 characters. */
   customId: string;
-  /** A custom placeholder text if nothing is selected. Maximum 100 characters. */
+  /** A custom placeholder text if nothing is selected. Maximum 150 characters. */
   placeholder?: string;
   /** The minimum number of items that must be selected. Default 1. Between 1-25. */
   minValues?: number;
@@ -95,4 +95,12 @@ export interface FileContent {
   blob: Blob;
   /** The name of the file */
   name: string;
+}
+
+/** https://discord.com/developers/docs/resources/guild#search-guild-members-query-string-params */
+export interface SearchMembers {
+  /** Query string to match username(s) and nickname(s) against */
+  query: string;
+  /** Max number of members to return (1-1000). Default: 1 */
+  limit?: number;
 }
